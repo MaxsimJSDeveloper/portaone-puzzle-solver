@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "solve:cli": "vite-node scripts/solveCli.ts"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
@@ -21,7 +22,9 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "oxlint": "^1.89.0",
+    "tsx": "^4.23.15",
     "typescript": "~7.0.2",
-    "vite": "^8.3.5"
+    "vite": "^8.3.5",
+    "vite-node": "^6.0.0"
   }
 }

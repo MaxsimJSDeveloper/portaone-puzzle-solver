@@ -1,4 +1,4 @@
-import { GraphBuilder } from "./GraphBuilder";
+import { GraphBuilder } from "./graphBuilder";
 import { PathFinder } from "./pathFinder";
 
 export class PuzzleSolver {

@@ -1,26 +1,38 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { PuzzleSolver } from "@/core/puzzleSolver";
+import { Header, SolutionCard, FragmentGrid } from "@/ui/components";
+import { useDataset } from "@/ui/hooks";
 
 export function App() {
-  const [fragments, setFragments] = useState<string[]>([]);
+  const { fragments, uploadCustomFile } = useDataset("/source.txt");
+  const [solution, setSolution] = useState<string>("");
+  const [isSolving, setIsSolving] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetch("/source.txt")
-      .then((res) => res.text())
-      .then((text) => {
-        const parsedData = text
-          .split(/\r?\n/)
-          .map((line) => line.trim())
-          .filter((line) => line.length >= 4);
-        
-        setFragments(parsedData);
-      })
-      .catch((err) => console.error("Download error :", err));
-  }, []);
+  const solve = () => {
+    setIsSolving(true);
+    setTimeout(() => {
+      const solver = new PuzzleSolver(fragments);
+      const result = solver.solve();
+      setSolution(result);
+      setIsSolving(false);
+    }, 50);
+  };
 
   return (
-    <div>
-      <h1>Puzzle Solver</h1>
-      <ul>{fragments.map((fragment, index)=><li key={index}>{fragment}</li>)}</ul>
+    <div className="min-h-screen bg-slate-950 text-slate-100 p-6 md:p-12 font-sans">
+      <div className="max-w-5xl mx-auto space-y-8">
+        <Header
+          fragmentsCount={fragments.length}
+          isSolving={isSolving}
+          onSolve={solve}
+          onFileUpload={uploadCustomFile}
+        />
+
+        <main className="space-y-8">
+          {solution && <SolutionCard solution={solution} />}
+          <FragmentGrid fragments={fragments} />
+        </main>
+      </div>
     </div>
   );
 }
