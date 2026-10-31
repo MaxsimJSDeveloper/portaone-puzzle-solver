@@ -1,13 +1,21 @@
+import { GraphBuilder } from "./GraphBuilder";
+import { PathFinder } from "./pathFinder";
+
 export class PuzzleSolver {
-  private fragments: string[] = [];
+  private fragments: string[];
+  private graphBuilder: GraphBuilder;
+  private pathFinder: PathFinder;
 
   constructor(rawFragments: string[]) {
     this.fragments = rawFragments.filter((f) => /^\d{4,}$/.test(f));
+    this.graphBuilder = new GraphBuilder();
+    this.pathFinder = new PathFinder();
   }
 
   public solve(): string {
     if (this.fragments.length === 0) return "";
-    
-    return `Loaded ${this.fragments.length} valid fragments successfully. Ready for algorithm implementation.`;
+
+    const graph = this.graphBuilder.build(this.fragments);
+    return this.pathFinder.findLongestPath(graph);
   }
 }
