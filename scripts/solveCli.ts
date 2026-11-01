@@ -22,15 +22,16 @@ console.timeEnd("Execution time");
 
 const memoryAfter = process.memoryUsage().heapUsed;
 
-const usedFragments = result.length >= 6 ? 1 + (result.length - 6) / 4 : 0;
-const coveragePercentage = ((result.length / maxPossibleLength) * 100).toFixed(2);
+const sequenceLength = result.sequence.length;
+const coveragePercentage = ((sequenceLength / maxPossibleLength) * 100).toFixed(2);
 
 const memoryUsedMB = ((memoryAfter - memoryBefore) / 1024 / 1024).toFixed(2);
 const totalHeapMB = (memoryAfter / 1024 / 1024).toFixed(2);
 
 console.log("\n--- BENCHMARK RESULTS ---");
 console.log(`Total fragments in file: ${fragments.length}`);
-console.log(`Used fragments in path:  ${usedFragments}`);
-console.log(`Sequence length:         ${result.length} / ${maxPossibleLength} chars (${coveragePercentage}%)`);
+console.log(`Used fragments in path:  ${result.usedCount}`);
+console.log(`Rejected fragments:      ${result.rejectedCount}`);
+console.log(`Sequence length:         ${sequenceLength} / ${maxPossibleLength} chars (${coveragePercentage}%)`);
 console.log(`Algorithm Memory (Delta): ${memoryUsedMB} MB`);
 console.log(`Total Heap Memory:       ${totalHeapMB} MB`);

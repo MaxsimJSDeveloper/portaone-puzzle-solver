@@ -1,7 +1,6 @@
 import { DatasetParser } from "@/utils/datasetParser";
 import { useState, useEffect } from "react";
 
-
 export function useDataset(defaultUrl: string = "/source.txt") {
   const [fragments, setFragments] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -40,5 +39,5 @@ export function useDataset(defaultUrl: string = "/source.txt") {
     }
   };
 
-  return { fragments, isLoading, error, uploadCustomFile };
+  return { fragments, setFragments, isLoading, error, uploadCustomFile };
 }

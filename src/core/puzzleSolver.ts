@@ -1,4 +1,5 @@
 import { FragmentValidator, GraphBuilder, PathFinder } from "@/core/services";
+import type { ISolverResult } from "./types";
 
 export class PuzzleSolver {
   private readonly fragments: readonly string[];
@@ -22,10 +23,24 @@ export class PuzzleSolver {
     this.rejectedFragments = rejected;
   }
 
-  public solve(): string {
-    if (this.fragments.length === 0) return "";
+  public solve(): ISolverResult {
+    if (this.fragments.length === 0) {
+      return {
+        sequence: "",
+        usedCount: 0,
+        rejectedCount: this.rejectedFragments.length,
+      };
+    }
 
     const components = this.graphBuilder.build(this.fragments);
-    return this.pathFinder.findLongPath(components);
+    const sequence = this.pathFinder.findLongPath(components);
+
+    const usedCount = sequence.length >= 6 ? (sequence.length - 6) / 4 + 1 : 0;
+
+    return {
+      sequence,
+      usedCount,
+      rejectedCount: this.rejectedFragments.length,
+    };
   }
 }

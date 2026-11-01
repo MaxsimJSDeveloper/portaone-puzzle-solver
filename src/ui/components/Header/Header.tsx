@@ -1,4 +1,6 @@
-import { type ChangeEvent, useRef } from "react";
+import { useRef, type ChangeEvent } from "react";
+import { Upload, Play } from "lucide-react";
+import { Button, Heading } from "@/ui/shared";
 
 interface HeaderProps {
   fragmentsCount: number;
@@ -19,24 +21,22 @@ export function Header({
     const file = e.target.files?.[0];
     if (file) {
       onFileUpload(file);
-      // Скидаємо значення інпута, щоб можна було повторно завантажувати один і той самий файл
       e.target.value = "";
     }
   };
 
   return (
-    <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+    <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800/80 pb-6">
       <div>
-        <h1 className="text-3xl font-extrabold tracking-tight bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+        <Heading level={1} className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
           PortaOne Puzzle Solver
-        </h1>
+        </Heading>
         <p className="text-slate-400 text-sm mt-1">
-          Sequence Reconstruction Algorithm • {fragmentsCount} fragments loaded
+          Sequence Reconstruction Algorithm • <span className="font-mono text-indigo-400">{fragmentsCount}</span> fragments loaded
         </p>
       </div>
 
       <div className="flex items-center gap-3">
-        {/* Прихований файл інпут */}
         <input
           ref={fileInputRef}
           type="file"
@@ -45,28 +45,24 @@ export function Header({
           className="hidden"
         />
 
-        <button
-          onClick={() => fileInputRef.current?.click()}
+        <Button
+          variant="secondary"
           disabled={isSolving}
-          className="px-4 py-3 bg-slate-800 hover:bg-slate-700 active:bg-slate-900 text-slate-200 text-sm font-medium rounded-xl border border-slate-700 transition-all disabled:opacity-50 cursor-pointer"
+          onClick={() => fileInputRef.current?.click()}
+          icon={<Upload size={16} />}
         >
           Upload TXT
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="primary"
+          isLoading={isSolving}
+          disabled={fragmentsCount === 0}
           onClick={onSolve}
-          disabled={isSolving || fragmentsCount === 0}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-semibold rounded-xl shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+          icon={<Play size={16} />}
         >
-          {isSolving ? (
-            <>
-              <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span>Analyzing Graph...</span>
-            </>
-          ) : (
-            <span>Solve Puzzle</span>
-          )}
-        </button>
+          {isSolving ? "Analyzing Graph..." : "Solve Puzzle"}
+        </Button>
       </div>
     </header>
   );
