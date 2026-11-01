@@ -10,6 +10,9 @@ const fragments = rawText
   .map((line) => line.trim())
   .filter((line) => line.length >= 4);
 
+const maxPossibleLength = 6 + (fragments.length - 1) * 4;
+
+if (global.gc) global.gc();
 const memoryBefore = process.memoryUsage().heapUsed;
 
 console.time("Execution time");
@@ -19,14 +22,15 @@ console.timeEnd("Execution time");
 
 const memoryAfter = process.memoryUsage().heapUsed;
 
+const usedFragments = result.length >= 6 ? 1 + (result.length - 6) / 4 : 0;
+const coveragePercentage = ((result.length / maxPossibleLength) * 100).toFixed(2);
+
 const memoryUsedMB = ((memoryAfter - memoryBefore) / 1024 / 1024).toFixed(2);
 const totalHeapMB = (memoryAfter / 1024 / 1024).toFixed(2);
 
-const expectedLength = 6 + (fragments.length - 1) * 4;
-const percentage = ((result.length / expectedLength) * 100).toFixed(2);
-
 console.log("\n--- BENCHMARK RESULTS ---");
-console.log(`Fragments count: ${fragments.length}`);
-console.log(`Length of sequence: ${result.length} / ${expectedLength} (${percentage}%)`);
-console.log(`Algorithm Memory Usage (Delta): ${memoryUsedMB} MB`);
-console.log(`Total Heap Memory: ${totalHeapMB} MB`);
+console.log(`Total fragments in file: ${fragments.length}`);
+console.log(`Used fragments in path:  ${usedFragments}`);
+console.log(`Sequence length:         ${result.length} / ${maxPossibleLength} chars (${coveragePercentage}%)`);
+console.log(`Algorithm Memory (Delta): ${memoryUsedMB} MB`);
+console.log(`Total Heap Memory:       ${totalHeapMB} MB`);

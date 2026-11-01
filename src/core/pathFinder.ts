@@ -46,9 +46,27 @@ export class PathFinder {
   private assembleSequence(pieces: IPuzzlePiece[]): string {
     if (pieces.length === 0) return "";
 
-    let result = pieces[0].value;
+    let longestChain: IPuzzlePiece[] = [];
+    let currentChain: IPuzzlePiece[] = [pieces[0]];
+
     for (let i = 1; i < pieces.length; i++) {
-      result += pieces[i].value.slice(2);
+      if (pieces[i - 1].tail === pieces[i].head) {
+        currentChain.push(pieces[i]);
+      } else {
+        if (currentChain.length > longestChain.length) {
+          longestChain = currentChain;
+        }
+        currentChain = [pieces[i]];
+      }
+    }
+
+    if (currentChain.length > longestChain.length) {
+      longestChain = currentChain;
+    }
+
+    let result = longestChain[0].value;
+    for (let i = 1; i < longestChain.length; i++) {
+      result += longestChain[i].value.slice(2);
     }
 
     return result;
