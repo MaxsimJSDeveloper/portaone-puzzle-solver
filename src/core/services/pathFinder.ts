@@ -1,21 +1,25 @@
+import type { PieceGraph, PuzzlePiece } from "@/core/domain";
 import { ChainAssembler } from "./chainAssembler";
 import { ComponentSplitter } from "./componentSplitter";
 import { GraphBalancer } from "./graphBalancer";
 import { TrailFinder } from "./trailFinder";
-import { PieceGraph, PuzzlePiece } from "@/core/domain";
+import { TrailSearcher } from "./trailSearcher";
 
 export class PathFinder {
+  private readonly searcher: TrailSearcher;
   private readonly balancer: GraphBalancer;
   private readonly trailFinder: TrailFinder;
   private readonly assembler: ChainAssembler;
   private readonly splitter: ComponentSplitter;
 
   constructor(
+    searcher = new TrailSearcher(),
     balancer = new GraphBalancer(),
     trailFinder = new TrailFinder(),
     assembler = new ChainAssembler(),
     splitter = new ComponentSplitter()
   ) {
+    this.searcher = searcher;
     this.balancer = balancer;
     this.trailFinder = trailFinder;
     this.assembler = assembler;
@@ -23,8 +27,17 @@ export class PathFinder {
   }
 
   public findLongPath(components: readonly PieceGraph[]): string {
-    const queue = [...components];
     let best = "";
+
+    for (const component of components) {
+      best = this.longest(best, [this.searcher.search(component)]);
+    }
+    return this.walkWithBalancing(components, best);
+  }
+
+  private walkWithBalancing(components: readonly PieceGraph[], initialBest: string): string {
+    const queue = [...components];
+    let best = initialBest;
 
     for (let graph = queue.pop(); graph; graph = queue.pop()) {
       if (graph.size === 0) continue;
@@ -33,8 +46,7 @@ export class PathFinder {
       const trail = this.trailFinder.find(graph);
       if (trail.length === 0) continue;
 
-      const chains = [...this.assembler.splitIntoChains(trail), ...sacrificedPaths];
-      best = this.longest(best, chains);
+      best = this.longest(best, [...this.assembler.splitIntoChains(trail), ...sacrificedPaths]);
 
       queue.push(...this.splitter.split(graph.pieces()));
     }

@@ -6,3 +6,5 @@ export { GraphBalancer } from "./graphBalancer";
 export { ChainAssembler } from "./chainAssembler";
 export { TrailFinder } from "./trailFinder";
 export { DisjointSet } from "./disjointSet";
+export { TrailSearcher } from "./trailSearcher";
+export { PotentialCalculator } from "./potentialCalculator";

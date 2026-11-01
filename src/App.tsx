@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Toaster, toast } from "sonner";
 import { Header, FragmentGrid } from "@/ui/components";
-import { DatasetInput, PuzzleGenerator, ResultViewer } from "@/ui/features";
+import { DatasetInput, ResultViewer } from "@/ui/features";
 import { useDataset } from "@/ui/hooks";
 import { PuzzleSolver } from "@/core/puzzleSolver";
 import type { ISolverResult } from "@/core/types";
-
 
 export function App() {
   const { fragments, setFragments, uploadCustomFile } = useDataset("/source.txt");
@@ -13,7 +12,7 @@ export function App() {
   const [executionTime, setExecutionTime] = useState<number>(0);
   const [isSolving, setIsSolving] = useState<boolean>(false);
 
-  const handleDatasetLoaded = (newFragments: string[], sourceName: string) => {
+  const handleDatasetLoaded = (newFragments: string[]) => {
     setFragments(newFragments);
     setSolverResult(null);
   };
@@ -59,9 +58,8 @@ export function App() {
         />
 
         <main className="space-y-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="max-w-3xl mx-auto">
             <DatasetInput onLoadFragments={handleDatasetLoaded} isLoading={isSolving} />
-            <PuzzleGenerator onGenerated={handleDatasetLoaded} />
           </div>
 
           {solverResult && (
