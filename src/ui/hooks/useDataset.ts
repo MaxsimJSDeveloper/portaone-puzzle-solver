@@ -1,5 +1,6 @@
+import { DatasetParser } from "@/utils/datasetParser";
 import { useState, useEffect } from "react";
-import { DatasetParser } from "@/core/utils";
+
 
 export function useDataset(defaultUrl: string = "/source.txt") {
   const [fragments, setFragments] = useState<string[]>([]);

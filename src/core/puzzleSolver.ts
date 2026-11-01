@@ -1,21 +1,31 @@
-import { GraphBuilder } from "./graphBuilder";
-import { PathFinder } from "./pathFinder";
+import { FragmentValidator, GraphBuilder, PathFinder } from "@/core/services";
 
 export class PuzzleSolver {
-  private fragments: string[];
-  private graphBuilder: GraphBuilder;
-  private pathFinder: PathFinder;
+  private readonly fragments: readonly string[];
+  private readonly graphBuilder: GraphBuilder;
+  private readonly pathFinder: PathFinder;
+  private readonly validator: FragmentValidator;
+  public readonly rejectedFragments: readonly string[];
 
-  constructor(rawFragments: string[]) {
-    this.fragments = rawFragments.filter((f) => /^\d{4,}$/.test(f));
-    this.graphBuilder = new GraphBuilder();
-    this.pathFinder = new PathFinder();
+  constructor(
+    rawFragments: readonly string[],
+    graphBuilder = new GraphBuilder(),
+    pathFinder = new PathFinder(),
+    validator = new FragmentValidator()
+  ) {
+    this.graphBuilder = graphBuilder;
+    this.pathFinder = pathFinder;
+    this.validator = validator;
+
+    const { valid, rejected } = this.validator.validate(rawFragments);
+    this.fragments = valid;
+    this.rejectedFragments = rejected;
   }
 
   public solve(): string {
     if (this.fragments.length === 0) return "";
 
-    const graphData = this.graphBuilder.build(this.fragments);
-    return this.pathFinder.findLongestPath(graphData);
+    const components = this.graphBuilder.build(this.fragments);
+    return this.pathFinder.findLongPath(components);
   }
 }
