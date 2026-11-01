@@ -1,21 +1,32 @@
-import type { IGraphBuilder, IPuzzlePiece } from "@/core/types";
+import type { IPuzzlePiece, IGraphData } from "./types";
 
-export class GraphBuilder implements IGraphBuilder {
-  build(fragments: string[]) {
+export class GraphBuilder {
+  public build(fragments: string[]): IGraphData {
     const graph = new Map<string, IPuzzlePiece[]>();
+    const inDegree = new Map<string, number>();
+    const outDegree = new Map<string, number>();
 
-    fragments.forEach((value, index) => {
+    for (let i = 0; i < fragments.length; i++) {
+      const value = fragments[i];
+      const head = value.slice(0, 2);
+      const tail = value.slice(-2);
+      
       const piece: IPuzzlePiece = {
-        id: `${index}_${value}`,
+        id: `${i}_${value}`,
         value,
-        head: value.slice(0, 2),
-        tail: value.slice(-2),
+        head,
+        tail,
       };
 
-      const existingPieces = graph.get(piece.head) ?? [];
-      graph.set(piece.head, [...existingPieces, piece]);
-    });
+      if (!graph.has(head)) {
+        graph.set(head, []);
+      }
+      graph.get(head)!.push(piece);
 
-    return graph;
+      outDegree.set(head, (outDegree.get(head) || 0) + 1);
+      inDegree.set(tail, (inDegree.get(tail) || 0) + 1);
+    }
+
+    return { graph, inDegree, outDegree };
   }
 }

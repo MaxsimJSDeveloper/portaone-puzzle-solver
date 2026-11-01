@@ -5,10 +5,8 @@ export interface IPuzzlePiece {
   tail: string;
 }
 
-export interface IGraphBuilder {
-  build(fragments: string[]): Map<string, IPuzzlePiece[]>;
-}
-
-export interface IPathFinder {
-  findLongestPath(graph: Map<string, IPuzzlePiece[]>): string;
+export interface IGraphData {
+  graph: Map<string, IPuzzlePiece[]>;
+  inDegree: Map<string, number>;
+  outDegree: Map<string, number>;
 }

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { PuzzleSolver } from "@/core/puzzleSolver";
+
 import { Header, SolutionCard, FragmentGrid } from "@/ui/components";
 import { useDataset } from "@/ui/hooks";
+import { PuzzleSolver } from "@/core/puzzleSolver";
 
 export function App() {
   const { fragments, uploadCustomFile } = useDataset("/source.txt");

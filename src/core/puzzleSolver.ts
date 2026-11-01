@@ -15,7 +15,7 @@ export class PuzzleSolver {
   public solve(): string {
     if (this.fragments.length === 0) return "";
 
-    const graph = this.graphBuilder.build(this.fragments);
-    return this.pathFinder.findLongestPath(graph);
+    const graphData = this.graphBuilder.build(this.fragments);
+    return this.pathFinder.findLongestPath(graphData);
   }
 }

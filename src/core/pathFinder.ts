@@ -1,49 +1,52 @@
-import type { IPathFinder, IPuzzlePiece } from "./types";
+import type { IPuzzlePiece, IGraphData } from "./types";
 
-export class PathFinder implements IPathFinder {
-  findLongestPath(graph: Map<string, IPuzzlePiece[]>): string {
-    let longestPathPieces: IPuzzlePiece[] = [];
+export class PathFinder {
+  public findLongestPath({ graph, inDegree, outDegree }: IGraphData): string {
+    const startNode = this.findStartNode(graph, inDegree, outDegree);
+    if (!startNode) return "";
 
-    const allPieces: IPuzzlePiece[] = [];
-    graph.forEach((pieces) => allPieces.push(...pieces));
+    const path: IPuzzlePiece[] = [];
+    const stack: { node: string; edge: IPuzzlePiece | null }[] = [
+      { node: startNode, edge: null }
+    ];
 
-    const visitedIds = new Set<string>();
+    while (stack.length > 0) {
+      const current = stack[stack.length - 1];
+      const edges = graph.get(current.node);
 
-    const dfs = (currentPiece: IPuzzlePiece, currentPath: IPuzzlePiece[]) => {
-      if (currentPath.length > longestPathPieces.length) {
-        longestPathPieces = [...currentPath];
-      }
-
-      const nextHead = currentPiece.tail;
-      const candidates = graph.get(nextHead) ?? [];
-
-      for (const nextPiece of candidates) {
-        if (!visitedIds.has(nextPiece.id)) {
-          visitedIds.add(nextPiece.id);
-          currentPath.push(nextPiece);
-
-          dfs(nextPiece, currentPath);
-
-          currentPath.pop();
-          visitedIds.delete(nextPiece.id);
+      if (edges && edges.length > 0) {
+        const nextEdge = edges.pop()!;
+        stack.push({ node: nextEdge.tail, edge: nextEdge });
+      } else {
+        const popped = stack.pop()!;
+        if (popped.edge !== null) {
+          path.push(popped.edge);
         }
       }
-    };
-
-    for (const startPiece of allPieces) {
-      visitedIds.clear();
-      visitedIds.add(startPiece.id);
-      dfs(startPiece, [startPiece]);
     }
 
-    return this.assembleSequence(longestPathPieces);
+    path.reverse();
+    return this.assembleSequence(path);
+  }
+
+  private findStartNode(
+    graph: Map<string, IPuzzlePiece[]>,
+    inDegree: Map<string, number>,
+    outDegree: Map<string, number>
+  ): string {
+    for (const [node, out] of outDegree.entries()) {
+      const inCount = inDegree.get(node) || 0;
+      if (out - inCount === 1) {
+        return node;
+      }
+    }
+    return graph.keys().next().value || "";
   }
 
   private assembleSequence(pieces: IPuzzlePiece[]): string {
     if (pieces.length === 0) return "";
 
     let result = pieces[0].value;
-
     for (let i = 1; i < pieces.length; i++) {
       result += pieces[i].value.slice(2);
     }
