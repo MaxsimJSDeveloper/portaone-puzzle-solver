@@ -10,11 +10,9 @@ interface DatasetInputProps {
 
 export function DatasetInput({ onLoadFragments, isLoading }: DatasetInputProps) {
   const [activeTab, setActiveTab] = useState<string>("file");
-//   const [rawText, setRawText] = useState<string>("");
 
   const tabs: TabItem[] = [
     { id: "file", label: "Upload File", icon: <Upload size={16} /> },
-    // { id: "text", label: "Manual Text", icon: <FileText size={16} /> },
     { id: "default", label: "Default Dataset", icon: <Database size={16} /> },
   ];
 
@@ -32,16 +30,6 @@ export function DatasetInput({ onLoadFragments, isLoading }: DatasetInputProps) 
     reader.readAsText(file);
     e.target.value = "";
   };
-
-//   const handleTextSubmit = () => {
-//     const lines = rawText.split(/\r?\n/).filter((line) => line.trim().length > 0);
-//     if (lines.length === 0) {
-//       toast.error("Please enter at least one fragment");
-//       return;
-//     }
-//     onLoadFragments(lines, "Custom Text");
-//     toast.success(`Loaded ${lines.length} fragments from input`);
-//   };
 
   const handleLoadDefault = async () => {
     try {
@@ -81,23 +69,6 @@ export function DatasetInput({ onLoadFragments, isLoading }: DatasetInputProps) 
             </label>
           </div>
         )}
-
-        {/* {activeTab === "text" && (
-          <div className="space-y-3">
-            <textarea
-              value={rawText}
-              onChange={(e) => setRawText(e.target.value)}
-              placeholder="Paste numeric fragments here (one per line)...&#10;e.g.&#10;248460&#10;608017"
-              rows={5}
-              className="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl font-mono text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:border-indigo-500 transition-colors resize-none"
-            />
-            <div className="flex justify-end">
-              <Button onClick={handleTextSubmit} isLoading={isLoading}>
-                Parse Fragments
-              </Button>
-            </div>
-          </div>
-        )} */}
 
         {activeTab === "default" && (
           <div className="flex flex-col items-center justify-center p-6 text-center space-y-3 bg-slate-950/30 rounded-xl border border-slate-800/50">
