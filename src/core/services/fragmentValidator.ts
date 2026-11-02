@@ -8,9 +8,17 @@ export class FragmentValidator {
     const valid: string[] = [];
     const rejected: string[] = [];
 
-    for (const fragment of rawFragments) {
-      (this.isValid(fragment) ? valid : rejected).push(fragment);
+    const digitRegex = new RegExp(`^\\d{${MIN_FRAGMENT_LENGTH},}$`);
+
+    for (const item of rawFragments) {
+      const trimmed = item.trim();
+      if (digitRegex.test(trimmed)) {
+        valid.push(trimmed);
+      } else if (trimmed.length > 0) {
+        rejected.push(trimmed);
+      }
     }
+
     return { valid, rejected };
   }
 
