@@ -1,5 +1,5 @@
 import { PuzzlePiece, type PieceGraph } from "@/core/domain";
-import { ComponentSplitter } from "@/core/services";
+import { ComponentSplitter } from "./componentSplitter";
 
 export class GraphBuilder {
   private readonly splitter: ComponentSplitter;

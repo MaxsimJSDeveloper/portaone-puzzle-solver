@@ -26,8 +26,8 @@ export class PathFinder {
     this.splitter = splitter;
   }
 
-  public findLongPath(components: readonly PieceGraph[]): string {
-    let best = "";
+  public findLongPath(components: readonly PieceGraph[]): readonly PuzzlePiece[] {
+    let best: readonly PuzzlePiece[] = [];
 
     for (const component of components) {
       best = this.longest(best, [this.searcher.search(component)]);
@@ -35,7 +35,10 @@ export class PathFinder {
     return this.walkWithBalancing(components, best);
   }
 
-  private walkWithBalancing(components: readonly PieceGraph[], initialBest: string): string {
+  private walkWithBalancing(
+    components: readonly PieceGraph[],
+    initialBest: readonly PuzzlePiece[]
+  ): readonly PuzzlePiece[] {
     const queue = [...components];
     let best = initialBest;
 
@@ -53,12 +56,18 @@ export class PathFinder {
     return best;
   }
 
-  private longest(current: string, chains: readonly (readonly PuzzlePiece[])[]): string {
+  private longest(
+    current: readonly PuzzlePiece[],
+    chains: readonly (readonly PuzzlePiece[])[]
+  ): readonly PuzzlePiece[] {
     let best = current;
     for (const chain of chains) {
-      const candidate = this.assembler.merge(chain);
-      if (candidate.length > best.length) best = candidate;
+      if (this.lengthOf(chain) > this.lengthOf(best)) best = chain;
     }
     return best;
+  }
+
+  private lengthOf(chain: readonly PuzzlePiece[]): number {
+    return chain.reduce((sum, piece) => sum + piece.weight, 0);
   }
 }

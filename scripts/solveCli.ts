@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { PuzzleSolver } from "../src/core/puzzleSolver";
 
-const filePath = path.resolve(process.cwd(), "public/source.txt");
+const filePath = path.resolve(process.cwd(), process.argv[2] ?? "public/source.txt");
 const rawText = fs.readFileSync(filePath, "utf-8");
 
 const fragments = rawText
@@ -10,7 +10,7 @@ const fragments = rawText
   .map((line) => line.trim())
   .filter((line) => line.length >= 4);
 
-const maxPossibleLength = 6 + (fragments.length - 1) * 4;
+const maxPossibleLength = fragments.reduce((sum, f) => sum + f.length - 2, 0) + 2;
 
 if (global.gc) global.gc();
 const memoryBefore = process.memoryUsage().heapUsed;

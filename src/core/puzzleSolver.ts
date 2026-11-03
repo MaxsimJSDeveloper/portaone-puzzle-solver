@@ -1,4 +1,4 @@
-import { FragmentValidator, GraphBuilder, PathFinder } from "@/core/services";
+import { ChainAssembler, FragmentValidator, GraphBuilder, PathFinder } from "@/core/services";
 import type { ISolverResult } from "./types";
 
 export class PuzzleSolver {
@@ -6,17 +6,20 @@ export class PuzzleSolver {
   private readonly graphBuilder: GraphBuilder;
   private readonly pathFinder: PathFinder;
   private readonly validator: FragmentValidator;
+  private readonly assembler: ChainAssembler;
   public readonly rejectedFragments: readonly string[];
 
   constructor(
     rawFragments: readonly string[],
     graphBuilder = new GraphBuilder(),
     pathFinder = new PathFinder(),
-    validator = new FragmentValidator()
+    validator = new FragmentValidator(),
+    assembler = new ChainAssembler()
   ) {
     this.graphBuilder = graphBuilder;
     this.pathFinder = pathFinder;
     this.validator = validator;
+    this.assembler = assembler;
 
     const { valid, rejected } = this.validator.validate(rawFragments);
     this.fragments = valid;
@@ -33,13 +36,11 @@ export class PuzzleSolver {
     }
 
     const components = this.graphBuilder.build(this.fragments);
-    const sequence = this.pathFinder.findLongPath(components);
-
-    const usedCount = sequence.length >= 6 ? (sequence.length - 6) / 4 + 1 : 0;
+    const chain = this.pathFinder.findLongPath(components);
 
     return {
-      sequence,
-      usedCount,
+      sequence: this.assembler.merge(chain),
+      usedCount: chain.length,
       rejectedCount: this.rejectedFragments.length,
     };
   }
